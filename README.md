@@ -97,7 +97,8 @@ python scripts/build_documentacao_pdf.py
 - **Filtro Passa-Baixa Anti-Tremor (`30 FPS`):** `vx(t) = 0.82 * vx(t - 1) + 0.18 * alvo(t)`, com passo lateral limitado a `[-2.10, +2.10]` px/frame.
 - **Raias Radiais Disjuntas:** `p(d) = d^1.65`, `Y = 44 - 148 * p`, com separacao modular `Ave = S mod 5`, `Comb = (S + 2) mod 5` e `Brisa = (S + 4) mod 5`.
 - **Motor Pen Mode-7 Continuo:** `296` tracos/quadro dentro de bloco `warp=true`, polilinha continua de `18` nos para o rio e `8` filetes de correnteza em `mod(Z_Mundo * 2.1, 24)`.
-- **Regressao Automatizada:** validado por `scripts/test_aeromattics.py` em VM Scratch deterministica.
+- **Navio Frontal em Porcentagem:** embarcações (`b1_prop2` e `b3_prop2`) navegam de proa na direcao do jogador ao longo de `X_rio(z)`, escalando progressivamente em porcentagem (`10%` a `125%`) conforme a aproximacao (inspirado na logica de profundidade do jogo *Navegacao* do projeto Mattics).
+- **Regressao Automatizada:** `20/20` testes aprovados em `scripts/test_aeromattics.py` na VM Scratch deterministica.
 
 </details>
 

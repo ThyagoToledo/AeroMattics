@@ -1764,6 +1764,10 @@ def build():
 
         def prop_update_transform() -> list[str]:
             return [
+                sb_prop.if_then(
+                    sb_prop.eq(sb_prop.var(*v_p_uoff), 0),
+                    sb_prop.change_var(*v_p_z, -0.055),
+                ),
                 sb_prop.set_var(*v_p_zrel, sb_prop.sub(sb_prop.var(*v_p_z), sb_prop.var(*V["Z Mundo"]))),
                 sb_prop.if_then(
                     sb_prop.lt(sb_prop.var(*v_p_zrel), 2.0),
@@ -1796,8 +1800,18 @@ def build():
                         ),
                     ),
                 ),
-                sb_prop.set_var(*v_p_esc, sb_prop.add(16, sb_prop.mul(0.55, sb_prop.var(*v_p_dy)))),
-                sb_prop.if_then(sb_prop.gt(sb_prop.var(*v_p_esc), 85), sb_prop.set_var(*v_p_esc, 85)),
+                sb_prop.if_else(
+                    sb_prop.eq(sb_prop.var(*v_p_uoff), 0),
+                    [
+                        # Navio vindo de frente: cresce progressivamente em porcentagem (10%..125%) conforme se aproxima (inspirado no jogo Navegacao)
+                        sb_prop.set_var(*v_p_esc, sb_prop.add(10, sb_prop.mul(0.92, sb_prop.var(*v_p_dy)))),
+                        sb_prop.if_then(sb_prop.gt(sb_prop.var(*v_p_esc), 125), sb_prop.set_var(*v_p_esc, 125)),
+                    ],
+                    [
+                        sb_prop.set_var(*v_p_esc, sb_prop.add(16, sb_prop.mul(0.55, sb_prop.var(*v_p_dy)))),
+                        sb_prop.if_then(sb_prop.gt(sb_prop.var(*v_p_esc), 85), sb_prop.set_var(*v_p_esc, 85)),
+                    ],
+                ),
                 sb_prop.set_size(sb_prop.var(*v_p_esc)),
                 sb_prop.set_var(
                     *v_p_x,

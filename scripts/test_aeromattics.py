@@ -946,6 +946,25 @@ class TestAeroMatticsLiveScratchVM(unittest.TestCase):
         cyan_pixels = int(((acai[:, :, 3] > 80) & (acai[:, :, 2] >= acai[:, :, 1] * 0.95) & (acai[:, :, 2] > acai[:, :, 0] * 1.35) & (acai[:, :, 1] > 140)).sum())
         self.assertLess(cyan_pixels, 25, msg=f"b1_prop3 ainda contem placa ciano da ponte ({cyan_pixels} px)")
 
+        # 4) Navio de frente no rio navegando na direcao do jogador e crescendo progressivamente em porcentagem
+        boats = [
+            c for c in vm_r.get_clones("Vegetação e Cenário Vivo")
+            if float(c.local_vars.get("vp_uoff", 1.0)) == 0.0
+        ]
+        self.assertEqual(len(boats), 1, msg="Deve existir 1 clone navio no canal central do rio na Fase 1")
+        boat = boats[0]
+        z_start = float(boat.local_vars["vp_z"])
+        size_samples = [float(boat.size)]
+        for _ in range(12):
+            vm_r.step_frame()
+            if float(boat.local_vars.get("vp_zrel", 0.0)) > 2.2:
+                size_samples.append(float(boat.size))
+        z_end = float(boat.local_vars["vp_z"])
+        if len(size_samples) >= 3:
+            self.assertLess(z_end, z_start, msg="Navio deve navegar em direcao ao jogador reduzindo Z_Prop")
+            self.assertGreater(size_samples[-1], size_samples[0], msg="Tamanho percentual do navio deve crescer ao se aproximar")
+            self.assertLessEqual(max(size_samples), 125.0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
