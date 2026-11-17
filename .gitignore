@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Raw media, large archives, and temporary extractions (GitHub 100 MB limit)
+*.mp4
+*.zip
+aviaoSemFundo/
+Voxel_airplane_banking_left_right_202609041449_000/
+sb3_extraido/
+antigo/
+backup/
+Gemini_Generated_Image_rmm88armm88armm8.jpg
+
+# OS
+.DS_Store
+Thumbs.db
