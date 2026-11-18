@@ -2191,7 +2191,7 @@ def build():
         v_fuel_d = ("Profundidade Comb", "vf_d")
         v_fuel_p = ("Perspectiva Comb", "vf_p")
         v_fuel_x0 = ("x0 Comb", "vf_x0")
-        fuel_scale_expr = lambda: sb_fuel.add(26, sb_fuel.mul(28, sb_fuel.var(*v_fuel_p)))
+        fuel_scale_expr = lambda: sb_fuel.add(36, sb_fuel.mul(42, sb_fuel.var(*v_fuel_p)))
         fuel_y_expr = lambda: sb_fuel.add(
             air_y_of_p(sb_fuel, sb_fuel.var(*v_fuel_p)),
             sb_fuel.mul(2.2, sb_fuel.mathop("sin", sb_fuel.mul(sb_fuel.timer(), 180))),
@@ -2274,7 +2274,7 @@ def build():
                 v_fuel_p[1]: [v_fuel_p[0], 0.005],
                 v_fuel_x0[1]: [v_fuel_x0[0], 0],
             },
-            size=26,
+            size=36,
             visible=False,
             layer_order=7,
         )

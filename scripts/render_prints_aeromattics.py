@@ -699,7 +699,7 @@ def generate_math_panel_chart(out_png_path: Path) -> None:
     y_mig_s = 76.0 - 1.72 * u_pct
     s_bird = 22.0 + 34.0 * p_scale
     s_brisa = 24.0 + 32.0 * p_scale
-    s_comb = 26.0 + 28.0 * p_scale
+    s_comb = 36.0 + 42.0 * p_scale
     s_mig = 38.0 + 0.25 * (76.0 - y_mig_s)
 
     ax.plot(u_pct, dir_comb, color="#d97706", linewidth=2.2, label="COMB.%: Dir = 2.7*v - 45")
@@ -712,7 +712,7 @@ def generate_math_panel_chart(out_png_path: Path) -> None:
     ax2 = ax.twinx()
     ax2.plot(u_pct, s_bird, color="#7c3aed", linewidth=1.8, label="Ave Br. S = 22+34*p(d)")
     ax2.plot(u_pct, s_brisa, color="#0d9488", linewidth=1.8, label="Brisa S = 24+32*p(d)")
-    ax2.plot(u_pct, s_comb, color="#ea580c", linewidth=1.8, label="Galao S = 26+28*p(d)")
+    ax2.plot(u_pct, s_comb, color="#ea580c", linewidth=1.8, label="Galao S = 36+42*p(d)")
     ax2.plot(u_pct, s_mig, color="#dc2626", linewidth=1.8, linestyle="-.", label="Harpia S = 38+0.25*(76-y)")
     ax2.set_ylabel("Tamanho Aparente S (%)", color="#6d28d9", fontsize=8.8)
     ax2.set_ylim(18, 92)

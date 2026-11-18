@@ -143,7 +143,7 @@ class TestAeroMatticsPackage(unittest.TestCase):
         self.assertEqual(self.targets["Rajada de Vento"]["rotationStyle"], "left-right")
         self.assertEqual(self.targets["Brisa Favorável"]["size"], 24)
         self.assertEqual(self.targets["Pássaros"]["size"], 22)
-        self.assertEqual(self.targets["Combustível no ar"]["size"], 26)
+        self.assertEqual(self.targets["Combustível no ar"]["size"], 36)
         self.assertEqual(self.targets["Aves Migratórias"]["size"], 38)
         self.assertEqual(self.targets["Vegetação e Cenário Vivo"]["size"], 20)
         self.assertEqual(self.targets["Nuvens"]["size"], 18)
@@ -609,14 +609,14 @@ class TestAeroMatticsPhysicsAndAccessibility(unittest.TestCase):
             p = math.exp(gamma * math.log(d))
             y_air = 44.0 - 148.0 * p
             esc_bird = 22.0 + 34.0 * p
-            esc_fuel = 26.0 + 28.0 * p
+            esc_fuel = 36.0 + 42.0 * p
             esc_brisa = 24.0 + 32.0 * p
             self.assertGreater(p, prev_p)
             self.assertLess(y_air, prev_y_air)
             self.assertGreaterEqual(esc_bird, 22.0)
             self.assertLessEqual(esc_bird, 56.0)
-            self.assertGreaterEqual(esc_fuel, 26.0)
-            self.assertLessEqual(esc_fuel, 54.0)
+            self.assertGreaterEqual(esc_fuel, 36.0)
+            self.assertLessEqual(esc_fuel, 78.0)
             self.assertGreaterEqual(esc_brisa, 24.0)
             self.assertLessEqual(esc_brisa, 56.0)
             prev_p, prev_y_air = p, y_air
@@ -963,6 +963,15 @@ class TestAeroMatticsLiveScratchVM(unittest.TestCase):
         if len(size_samples) >= 3:
             self.assertGreater(size_samples[-1], size_samples[0], msg="Tamanho percentual do navio deve crescer ao se aproximar")
             self.assertLessEqual(max(size_samples), 108.0)
+
+        # Garante que Vegetacao / Barcos nunca causam dano nem tocam o Aviao
+        prop_lits = collect_block_literals(self.targets["Vegetação e Cenário Vivo"]["blocks"]) if hasattr(self, "targets") else []
+        with zipfile.ZipFile(SB3_PATH, "r") as zf_chk:
+            pj_chk = json.loads(zf_chk.read("project.json").decode("utf-8"))
+            prop_blk = {t["name"]: t for t in pj_chk["targets"]}["Vegetação e Cenário Vivo"]["blocks"]
+            prop_lits = collect_block_literals(prop_blk)
+            self.assertNotIn("sensing_touchingobject", prop_lits)
+            self.assertNotIn("Vidas", prop_lits)
 
 
 if __name__ == "__main__":
