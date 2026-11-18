@@ -1764,13 +1764,18 @@ def build():
 
         def prop_update_transform() -> list[str]:
             return [
-                sb_prop.if_then(
-                    sb_prop.eq(sb_prop.var(*v_p_uoff), 0),
-                    sb_prop.change_var(*v_p_z, -0.055),
-                ),
                 sb_prop.set_var(*v_p_zrel, sb_prop.sub(sb_prop.var(*v_p_z), sb_prop.var(*V["Z Mundo"]))),
                 sb_prop.if_then(
-                    sb_prop.lt(sb_prop.var(*v_p_zrel), 2.0),
+                    sb_prop.eq(sb_prop.var(*v_p_uoff), 0),
+                    sb_prop.if_else(
+                        sb_prop.gt(sb_prop.var(*v_p_zrel), 9.0),
+                        [sb_prop.change_var(*v_p_z, -0.045)],
+                        [sb_prop.change_var(*v_p_z, 0.032)],
+                    ),
+                    sb_prop.set_var(*v_p_zrel, sb_prop.sub(sb_prop.var(*v_p_z), sb_prop.var(*V["Z Mundo"]))),
+                ),
+                sb_prop.if_then(
+                    sb_prop.lt(sb_prop.var(*v_p_zrel), 2.2),
                     sb_prop.change_var(*v_p_z, 28.8),
                     sb_prop.set_var(
                         *v_p_seed,
@@ -1788,6 +1793,13 @@ def build():
                     sb_prop.go_layers("forward", 5),
                     sb_prop.set_var(*v_p_zrel, sb_prop.sub(sb_prop.var(*v_p_z), sb_prop.var(*V["Z Mundo"]))),
                 ),
+                sb_prop.if_then(
+                    sb_prop.bool_and(
+                        sb_prop.bool_not(sb_prop.eq(sb_prop.var(*v_p_bioma), sb_prop.var(*V["Etapa"]))),
+                        sb_prop.gt(sb_prop.var(*v_p_zrel), 10.5),
+                    ),
+                    *prop_assign_tipo_and_offset(),
+                ),
                 sb_prop.set_var(*v_p_dy, sb_prop.div(260, sb_prop.var(*v_p_zrel))),
                 sb_prop.set_var(*v_p_y, sb_prop.sub(33, sb_prop.var(*v_p_dy))),
                 sb_prop.if_then(
@@ -1803,9 +1815,9 @@ def build():
                 sb_prop.if_else(
                     sb_prop.eq(sb_prop.var(*v_p_uoff), 0),
                     [
-                        # Navio vindo de frente: cresce progressivamente em porcentagem (10%..125%) conforme se aproxima (inspirado no jogo Navegacao)
-                        sb_prop.set_var(*v_p_esc, sb_prop.add(10, sb_prop.mul(0.92, sb_prop.var(*v_p_dy)))),
-                        sb_prop.if_then(sb_prop.gt(sb_prop.var(*v_p_esc), 125), sb_prop.set_var(*v_p_esc, 125)),
+                        # Navio vindo de frente: cresce em porcentagem (12%..108%) com suavizacao perto da borda
+                        sb_prop.set_var(*v_p_esc, sb_prop.add(12, sb_prop.mul(0.85, sb_prop.var(*v_p_dy)))),
+                        sb_prop.if_then(sb_prop.gt(sb_prop.var(*v_p_esc), 108), sb_prop.set_var(*v_p_esc, 108)),
                     ],
                     [
                         sb_prop.set_var(*v_p_esc, sb_prop.add(16, sb_prop.mul(0.55, sb_prop.var(*v_p_dy)))),

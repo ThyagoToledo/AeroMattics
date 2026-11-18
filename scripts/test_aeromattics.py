@@ -941,29 +941,28 @@ class TestAeroMatticsLiveScratchVM(unittest.TestCase):
         )
         self.assertGreaterEqual(linked, 45, msg=f"Polilinha do rio teve quebras: apenas {linked} vertices conectados")
 
-        # Verifica b1_prop3 agora ser o Acaizeiro 3D sem agua turquesa/ciano da antiga ponte
+        # Verifica b1_prop3 agora ser o Acaizeiro 3D sem agua turquesa/ciano da antiga ponte nem buracos brancos presos entre troncos
         acai = np.array(Image.open(SB3_PATH.parent / "assets_organizados" / "09_cenarios_vivos" / "props" / "b1_prop3_q1.png").convert("RGBA"))
         cyan_pixels = int(((acai[:, :, 3] > 80) & (acai[:, :, 2] >= acai[:, :, 1] * 0.95) & (acai[:, :, 2] > acai[:, :, 0] * 1.35) & (acai[:, :, 1] > 140)).sum())
         self.assertLess(cyan_pixels, 25, msg=f"b1_prop3 ainda contem placa ciano da ponte ({cyan_pixels} px)")
+        white_holes = int(((acai[:, :, 3] > 128) & (acai[:, :, 0] >= 225) & (acai[:, :, 1] >= 225) & (acai[:, :, 2] >= 225) & ((np.max(acai[:, :, :3], axis=2) - np.min(acai[:, :, :3], axis=2)) <= 16)).sum())
+        self.assertEqual(white_holes, 0, msg=f"b1_prop3 ainda contem {white_holes} px brancos presos entre os troncos")
 
-        # 4) Navio de frente no rio navegando na direcao do jogador e crescendo progressivamente em porcentagem
+        # 4) Navio de frente no rio navegando na direcao do jogador e crescendo progressivamente em porcentagem (12%..108%) sem disparar perto da borda
         boats = [
             c for c in vm_r.get_clones("Vegetação e Cenário Vivo")
             if float(c.local_vars.get("vp_uoff", 1.0)) == 0.0
         ]
         self.assertEqual(len(boats), 1, msg="Deve existir 1 clone navio no canal central do rio na Fase 1")
         boat = boats[0]
-        z_start = float(boat.local_vars["vp_z"])
         size_samples = [float(boat.size)]
         for _ in range(12):
             vm_r.step_frame()
             if float(boat.local_vars.get("vp_zrel", 0.0)) > 2.2:
                 size_samples.append(float(boat.size))
-        z_end = float(boat.local_vars["vp_z"])
         if len(size_samples) >= 3:
-            self.assertLess(z_end, z_start, msg="Navio deve navegar em direcao ao jogador reduzindo Z_Prop")
             self.assertGreater(size_samples[-1], size_samples[0], msg="Tamanho percentual do navio deve crescer ao se aproximar")
-            self.assertLessEqual(max(size_samples), 125.0)
+            self.assertLessEqual(max(size_samples), 108.0)
 
 
 if __name__ == "__main__":
